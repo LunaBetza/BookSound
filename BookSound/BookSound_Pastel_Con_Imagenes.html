@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookSound | Lee, escucha y descubre</title>
+  <style>
+    :root {
+      --lila: #d9c2ed;
+      --lila-oscuro: #8b6aa8;
+      --rosa: #f7d6e3;
+      --rosa-oscuro: #bd7895;
+      --azul: #d9ecfa;
+      --amarillo: #fff0bf;
+      --crema: #fffaf6;
+      --texto: #55465f;
+      --blanco: #ffffff;
+      --sombra: 0 8px 24px rgba(115, 83, 133, .12);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      color: var(--texto);
+      background: linear-gradient(135deg, #fffaf6 0%, #f9f0fb 50%, #eff8ff 100%);
+    }
+    header {
+      background: rgba(255,255,255,.9);
+      padding: 16px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      box-shadow: 0 3px 15px rgba(90,65,105,.07);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+    }
+    .logo { font-size: 1.8rem; font-weight: 800; color: var(--lila-oscuro); letter-spacing: -.8px; }
+    .logo span { color: var(--rosa-oscuro); }
+    nav { display: flex; flex-wrap: wrap; gap: 8px; }
+    nav a {
+      text-decoration: none; color: var(--texto); font-weight: 600;
+      padding: 9px 13px; border-radius: 20px; transition: .2s;
+    }
+    nav a:hover { background: var(--rosa); }
+    .hero {
+      padding: 66px 7% 58px; display: grid; grid-template-columns: 1.3fr .7fr;
+      align-items: center; gap: 30px;
+    }
+    .hero h1 { font-size: clamp(2.2rem, 5vw, 4rem); line-height: 1.08; margin: 0 0 16px; color: #70577f; }
+    .hero p { font-size: 1.1rem; line-height: 1.7; max-width: 620px; }
+    .hero-art {
+      min-height: 245px; border-radius: 35px; background: linear-gradient(135deg, var(--rosa), var(--lila), var(--azul));
+      display: grid; place-items: center; font-size: 6rem; box-shadow: var(--sombra);
+    }
+    .pill { display: inline-block; background: var(--amarillo); padding: 8px 15px; border-radius: 30px; font-weight: 700; margin-bottom: 14px; }
+    .primary-btn, .secondary-btn {
+      border: 0; border-radius: 25px; padding: 11px 18px; font-weight: 700; cursor: pointer;
+      transition: transform .2s, filter .2s; font-size: .95rem;
+    }
+    .primary-btn { background: var(--lila-oscuro); color: white; }
+    .secondary-btn { background: var(--rosa); color: #704e63; }
+    .primary-btn:hover, .secondary-btn:hover { transform: translateY(-2px); filter: brightness(.98); }
+    section { padding: 34px 7% 48px; }
+    .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+    h2 { margin: 0; color: #70577f; font-size: 1.9rem; }
+    .muted { color: #887b90; }
+    .tools { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0 22px; }
+    input, select {
+      border: 1px solid #e5d8eb; background: white; color: var(--texto); border-radius: 22px;
+      padding: 12px 16px; font-size: .95rem; outline: none;
+    }
+    input { flex: 1; min-width: 210px; }
+    input:focus, select:focus { border-color: var(--lila-oscuro); box-shadow: 0 0 0 3px rgba(217,194,237,.35); }
+    .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 20px; }
+    .book-card {
+      background: rgba(255,255,255,.92); border: 1px solid #f0e7f3; border-radius: 22px;
+      padding: 13px; box-shadow: var(--sombra); display: flex; flex-direction: column; min-width: 0;
+      transition: transform .2s;
+    }
+    .book-card:hover { transform: translateY(-5px); }
+    .cover-wrap { background: linear-gradient(145deg, #f7e9f4, #eaf5ff); border-radius: 15px; overflow: hidden; height: 225px; display: grid; place-items: center; }
+    .book-cover { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
+    .cover-placeholder { font-size: 3rem; }
+    .book-card h3 { font-size: 1rem; margin: 13px 0 5px; line-height: 1.35; }
+    .author { color: #887b90; font-size: .88rem; margin: 0 0 12px; }
+    .book-actions { display: flex; gap: 7px; margin-top: auto; flex-wrap: wrap; }
+    .book-actions button { flex: 1; min-width: 70px; padding: 9px 8px; font-size: .8rem; }
+    .empty { padding: 28px; background: white; border-radius: 18px; text-align: center; grid-column: 1/-1; }
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .feature { background: white; padding: 22px; border-radius: 20px; box-shadow: var(--sombra); }
+    .feature .emoji { font-size: 2rem; }
+    .feature h3 { margin: 10px 0 6px; }
+    .reader-box { background: white; border-radius: 22px; padding: 22px; box-shadow: var(--sombra); }
+    #readerText { line-height: 1.7; }
+    footer { background: #eee2f5; text-align: center; padding: 24px; margin-top: 25px; }
+    .notice { font-size: .85rem; color: #82758a; margin-top: 14px; }
+    @media (max-width: 760px) {
+      .hero { grid-template-columns: 1fr; padding-top: 42px; }
+      .hero-art { min-height: 160px; font-size: 4rem; }
+      .feature-grid { grid-template-columns: 1fr; }
+      header { justify-content: center; }
+      nav { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Book<span>Sound</span> 📖</div>
+    <nav>
+      <a href="#inicio">Inicio</a>
+      <a href="#explorar">Explorar libros</a>
+      <a href="#biblioteca">Mi biblioteca</a>
+      <a href="#funciones">Funciones</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div>
+        <span class="pill">Un mundo de historias</span>
+        <h1>Lee, escucha y descubre tu próxima historia.</h1>
+        <p>BookSound reúne libros, audiolibros y resúmenes en un solo lugar. Explora títulos, guarda tus favoritos y disfruta de la lectura a tu manera.</p>
+        <a href="#explorar"><button class="primary-btn">Explorar libros</button></a>
+      </div>
+      <div class="hero-art" aria-label="Libros y audífonos">📚🎧</div>
+    </section>
+
+    <section id="explorar">
+      <div class="section-heading">
+        <div><h2>Explora nuestros libros</h2><p class="muted">Encuentra una historia que te encante.</p></div>
+      </div>
+      <div class="tools">
+        <input id="searchInput" type="search" placeholder="Buscar por título o autor..." aria-label="Buscar libros">
+        <select id="categoryFilter" aria-label="Filtrar por categoría">
+          <option value="Todos">Todas las categorías</option>
+          <option value="Ficción">Ficción</option>
+          <option value="Fantasía">Fantasía</option>
+          <option value="Romance">Romance</option>
+          <option value="Clásicos">Clásicos</option>
+          <option value="Desarrollo personal">Desarrollo personal</option>
+        </select>
+      </div>
+      <div class="book-grid" id="bookGrid"></div>
+      <p class="notice">Para agregar tus portadas, guarda las imágenes en una carpeta llamada <b>imagenes</b>, junto a este archivo HTML, y utiliza los nombres indicados en el arreglo de libros.</p>
+    </section>
+
+    <section id="biblioteca">
+      <div class="section-heading">
+        <div><h2>Mi biblioteca 💜</h2><p class="muted">Aquí aparecen los libros que guardes como favoritos.</p></div>
+      </div>
+      <div class="book-grid" id="favoritesGrid"></div>
+    </section>
+
+    <section id="funciones">
+      <div class="section-heading"><h2>Disfruta BookSound</h2></div>
+      <div class="feature-grid">
+        <article class="feature"><div class="emoji">📚</div><h3>Explora libros</h3><p>Busca historias por título, autor o categoría y consulta una breve descripción.</p></article>
+        <article class="feature"><div class="emoji">🎧</div><h3>Escucha</h3><p>Utiliza la función de lectura en voz alta de tu navegador para escuchar la descripción de cada libro.</p></article>
+        <article class="feature"><div class="emoji">⭐</div><h3>Guarda favoritos</h3><p>Agrega libros a tu biblioteca personal para encontrarlos fácilmente después.</p></article>
+      </div>
+    </section>
+
+    <section id="lector">
+      <div class="reader-box">
+        <h2 id="readerTitle">Lectura en voz alta</h2>
+        <p id="readerText">Selecciona “Escuchar” en cualquier libro para reproducir su descripción.</p>
+        <button class="primary-btn" onclick="stopReading()">Detener audio</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>BookSound © 2026 · Historias para leer y escuchar 💗</footer>
+
+  <script>
+    // CAMBIA los nombres de las imágenes aquí si tus archivos tienen otros nombres.
+    // Guarda todas las portadas dentro de una carpeta llamada "imagenes".
+    const books = [
+      {
+        id: 1,
+        title: "El principito",
+        author: "Antoine de Saint-Exupéry",
+        category: "Clásicos",
+        image: "el principito.webp",
+        description: "Un pequeño príncipe viaja por distintos planetas y descubre el valor de la amistad, el amor y las cosas verdaderamente importantes."
+      },
+      {
+        id: 2,
+        title: "Harry Potter y la piedra filosofal",
+        author: "J. K. Rowling",
+        category: "Fantasía",
+        image: "harry potter.jpg",
+        description: "Harry descubre que es un mago y comienza una nueva vida en Hogwarts, una escuela llena de magia, misterios y aventuras."
+      },
+      {
+        id: 3,
+        title: "Orgullo y prejuicio",
+        author: "Jane Austen",
+        category: "Romance",
+        image: "orgullo y prejuicio.jpg",
+        description: "Elizabeth Bennet y el señor Darcy se enfrentan a sus prejuicios y diferencias mientras descubren sus verdaderos sentimientos."
+      },
+      {
+        id: 4,
+        title: "A través de mi ventana",
+        author: "Ariana Godoy",
+        category: "Romance",
+        image: "ventana.jpg",
+        description: "Raquel lleva mucho tiempo enamorada de su vecino Ares, pero acercarse a él cambiará lo que imaginaba sobre el amor."
+      },
+      {
+        id: 5,
+        title: "Los juegos del hambre",
+        author: "Suzanne Collins",
+        category: "Ficción",
+        image: "los juegos.jpg",
+        description: "Katniss Everdeen se ofrece como tributo en un peligroso torneo televisado donde tendrá que luchar por sobrevivir."
+      },
+      {
+        id: 6,
+        title: "Hábitos atómicos",
+        author: "James Clear",
+        category: "Desarrollo personal",
+        image: "Hábitos.jpg",
+        description: "Una guía para construir buenos hábitos y mejorar poco a poco mediante pequeños cambios constantes."
+      },
+      {
+        id: 7,
+        title: "Cien años de soledad",
+        author: "Gabriel García Márquez",
+        category: "Clásicos",
+        image: "cien años.webp",
+        description: "La historia de varias generaciones de la familia Buendía en el pueblo imaginario de Macondo."
+      },
+      {
+        id: 8,
+        title: "El Hobbit",
+        author: "J. R. R. Tolkien",
+        category: "Fantasía",
+        image: "hobbit.jpg",
+        description: "Bilbo Bolsón emprende un viaje inesperado junto a un grupo de enanos para recuperar un tesoro custodiado por un dragón."
+      }
+    ];
+
+    const bookGrid = document.getElementById("bookGrid");
+    const favoritesGrid = document.getElementById("favoritesGrid");
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+
+    function getFavorites() {
+      return JSON.parse(localStorage.getItem("booksound-favorites") || "[]");
+    }
+
+    function saveFavorites(favorites) {
+      localStorage.setItem("booksound-favorites", JSON.stringify(favorites));
+    }
+
+    function createBookCard(book) {
+      const favorites = getFavorites();
+      const isFavorite = favorites.includes(book.id);
+      return `
+        <article class="book-card">
+          <div class="cover-wrap">
+            <img class="book-cover" src="${book.image}" alt="Portada de ${escapeHTML(book.title)}"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="cover-placeholder" style="display:none" aria-label="Portada no disponible">📘</div>
+          </div>
+          <h3>${escapeHTML(book.title)}</h3>
+          <p class="author">${escapeHTML(book.author)}</p>
+          <div class="book-actions">
+            <button class="secondary-btn" onclick="toggleFavorite(${book.id})">${isFavorite ? "♥ Guardado" : "♡ Favorito"}</button>
+            <button class="primary-btn" onclick="listenToBook(${book.id})">▶ Escuchar</button>
+          </div>
+        </article>`;
+    }
+
+    function escapeHTML(text) {
+      return String(text).replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+      }[character]));
+    }
+
+    function renderBooks() {
+      const search = searchInput.value.toLowerCase().trim();
+      const category = categoryFilter.value;
+      const filtered = books.filter(book => {
+        const matchesSearch = book.title.toLowerCase().includes(search) || book.author.toLowerCase().includes(search);
+        const matchesCategory = category === "Todos" || book.category === category;
+        return matchesSearch && matchesCategory;
+      });
+      bookGrid.innerHTML = filtered.length
+        ? filtered.map(createBookCard).join("")
+        : '<div class="empty">No encontramos libros con esa búsqueda. Intenta con otro título o autor. 🌷</div>';
+      renderFavorites();
+    }
+
+    function renderFavorites() {
+      const favoriteIds = getFavorites();
+      const favoriteBooks = books.filter(book => favoriteIds.includes(book.id));
+      favoritesGrid.innerHTML = favoriteBooks.length
+        ? favoriteBooks.map(createBookCard).join("")
+        : '<div class="empty">Todavía no tienes favoritos. Guarda un libro para verlo aquí. 💜</div>';
+    }
+
+    function toggleFavorite(id) {
+      let favorites = getFavorites();
+      favorites = favorites.includes(id) ? favorites.filter(item => item !== id) : [...favorites, id];
+      saveFavorites(favorites);
+      renderBooks();
+    }
+
+    function listenToBook(id) {
+      const book = books.find(item => item.id === id);
+      if (!book) return;
+      if (!("speechSynthesis" in window)) {
+        alert("Tu navegador no permite la lectura en voz alta.");
+        return;
+      }
+      stopReading();
+      document.getElementById("readerTitle").textContent = book.title;
+      document.getElementById("readerText").textContent = book.description;
+      const utterance = new SpeechSynthesisUtterance(`${book.title}. De ${book.author}. ${book.description}`);
+      utterance.lang = "es-MX";
+      utterance.rate = 0.95;
+      speechSynthesis.speak(utterance);
+      document.getElementById("lector").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function stopReading() {
+      if ("speechSynthesis" in window) speechSynthesis.cancel();
+    }
+
+    searchInput.addEventListener("input", renderBooks);
+    categoryFilter.addEventListener("change", renderBooks);
+    renderBooks();
+  </script>
+</body>
+</html>
